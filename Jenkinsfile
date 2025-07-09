@@ -4,16 +4,21 @@ pipeline {
     environment {
         AWS_REGION = 'ap-south-1'
         AWS_ACCOUNT_ID = '346701285224'    
-        ECR_REPO_NAME = 'Akashvb/akash'           
+        ECR_REPO_NAME = 'akash'  // ✅ Removed invalid slash
         IMAGE_TAG = 'v2'
         ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/main']],
+                          userRemoteConfigs: [[
+                              url: 'https://github.com/shashi04/Jenkins-batch2.git'
+                          ]]
+                ])
             }
         }
 
